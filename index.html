@@ -88,39 +88,32 @@
   </form>
 
   <script>
-    const form = document.getElementById('orderForm');
-    const messageDiv = document.getElementById('message');
+  document.getElementById('orderForm').addEventListener('submit', function(event) {
+    event.preventDefault();
 
-    form.addEventListener('submit', async (event) => {
-      event.preventDefault();
-      messageDiv.textContent = '';
-      
-      const data = {
-        nama: form.nama.value,
-        jenisLayanan: form.jenisLayanan.value,
-        harga: form.harga.value,
-        status: form.status.value
-      };
+    const formData = new FormData(this);
 
-      try {
-        const response = await fetch('https://script.google.com/macros/s/AKfycbw62LVa3eqxFFnWyUsAdkKRTDT0WFKTVoSOxcBUh2dzpPgT7sKABiimgyzKt1aIPzQ4/exec', { // Ganti dengan URL Google Apps Script Anda
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data),
-        });
-
-        const result = await response.json();
-       if (response.ok) {
-  const result = await response.json();
-  messageDiv.textContent = result.message;
-  messageDiv.className = 'message success';
-  form.reset();
-} else {
-  const errorResult = await response.json();
-  messageDiv.textContent = `Error: ${errorResult.message}`;
-  messageDiv.className = 'message error';
-}
+    fetch('https://script.google.com/macros/s/AKfycbz2MGlzw9YHpGXqg9QAng5DhCAEzuNKpkMpT1yvQIAbXuTHYmn6oz0cJ0RktBDZWJMIvQ/exec', { // Ganti dengan URL Web App Anda
+      method: 'POST',
+      body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+      const messageElement = document.getElementById('message');
+      if (data.result === 'success') {
+        messageElement.textContent = data.message;
+        messageElement.classList.add('success');
+      } else {
+        messageElement.textContent = 'Gagal mengirim data.';
+        messageElement.classList.add('error');
+      }
+    })
+    .catch(error => {
+      const messageElement = document.getElementById('message');
+      messageElement.textContent = 'Terjadi kesalahan.';
+      messageElement.classList.add('error');
+    });
+  });
+</script>
 
         
